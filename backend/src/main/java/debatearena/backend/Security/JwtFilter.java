@@ -30,6 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 🔥 IGNORER les routes publiques
+
         if (path.equals("/api/auth/signin") || path.equals("/api/auth/signup")) {
           filterChain.doFilter(request, response);
           return;
