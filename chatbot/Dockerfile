@@ -17,9 +17,6 @@ COPY app.py .
 # Définir la variable d'environnement pour l'API key (à remplacer lors de l'exécution)
 ENV GOOGLE_API_KEY=""
 
-# Exécuter le script Python
-CMD ["python", "app.py"]
-#CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001"]
 # Lancer l'API
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5005"]
 
