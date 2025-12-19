@@ -10,7 +10,7 @@ import debatearena.backend.Repository.UtilisateurRepository;
 import debatearena.backend.Security.JwtUtil;
 import debatearena.backend.Service.BadgeService;
 import debatearena.backend.Service.UtilisateurService;
-import lombok.RequiredArgsConstructor;
+//import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth/")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class AuthController {
 
     private final UtilisateurService utilisateurService;
@@ -28,6 +28,18 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final BadgeService badgeService;
+
+    public AuthController(UtilisateurService utilisateurService,
+                          PasswordEncoder passwordEncoder,
+                          JwtUtil jwtUtil,
+                          AuthenticationManager authenticationManager,
+                          BadgeService badgeService) {
+        this.utilisateurService = utilisateurService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
+        this.badgeService = badgeService;
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpRequest ) {

@@ -39,4 +39,75 @@ public class Utilisateur {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_badge")
     private Badge badge;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public role_enum getRole() {
+        return role;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+    public long getId(){
+        return id;
+    }
+    public void setId(){
+        this.id=id;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public void setRole(role_enum role) {
+        this.role = role;
+    }
+
+    public Badge getBadge() {
+        return badge;
+    }
+
+    // ✅ SETTER (avec paramètre)
+    public void setBadge(Badge badge) {
+        this.badge = badge;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

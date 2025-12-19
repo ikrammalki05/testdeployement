@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 public class SignUpResponse {
     private Long id;
     private String nom;
@@ -13,4 +13,86 @@ public class SignUpResponse {
     private Integer score;
     private String badgeNom;
     private String badgeCategorie;
+
+    public SignUpResponse(Long id,
+                          String nom,
+                          String prenom,
+                          String email,
+                          Integer score,
+                          String badgeNom,
+                          String badgeCategorie) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+        this.score = score;
+        this.badgeNom = badgeNom;
+        this.badgeCategorie = badgeCategorie;
+    }
+
+    public SignUpResponse() {
+
+    }
+
+    // ---------- GETTERS ----------
+    public Long getId() {
+        return id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public String getBadgeNom() {
+        return badgeNom;
+    }
+
+    public String getBadgeCategorie() {
+        return badgeCategorie;
+    }
+
+    // ---------- SETTERS ----------
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public void setBadgeNom(String badgeNom) {
+        this.badgeNom = badgeNom;
+    }
+
+    public void setBadgeCategorie(String badgeCategorie) {
+        this.badgeCategorie = badgeCategorie;
+    }
+
+    public void setMessage(String created) {
+        // Aucun attribut message dans la classe
+    }
 }

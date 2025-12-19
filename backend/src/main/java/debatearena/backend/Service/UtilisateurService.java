@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 @Data
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Service
 public class UtilisateurService {
     private final UtilisateurRepository utilisateurRepository;
@@ -24,6 +24,15 @@ public class UtilisateurService {
     private final BadgeService badgeService;
     private final JwtUtil jwtUtil;
 
+    public UtilisateurService(UtilisateurRepository utilisateurRepository,
+                              PasswordEncoder passwordEncoder,
+                              BadgeService badgeService,
+                              JwtUtil jwtUtil) {
+        this.utilisateurRepository = utilisateurRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.badgeService = badgeService;
+        this.jwtUtil = jwtUtil;
+    }
     public Optional<Utilisateur> findUtilisateurByEmail(String email) {
         return utilisateurRepository.findByEmail(email);
     }

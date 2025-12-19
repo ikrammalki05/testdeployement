@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 public class BadgeService {
 
     private final BadgeRepository badgeRepository;
+    public BadgeService(BadgeRepository badgeRepository) {
+        this.badgeRepository = badgeRepository;
+    }
 
     public Badge getDefaultBadge(){
         String nom_default = "Nouveau Débatteur";

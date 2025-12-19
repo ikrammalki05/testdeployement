@@ -26,4 +26,33 @@ public class Badge {
     @Column(nullable = false)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private categorie_badge_enum categorie;
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+    public void getBadge(Badge badge) {
+        badge.setNom(nom);
+        badge.setDescription(description);
+    }
+
+    // Getter et Setter pour description
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    // Getter et Setter pour categorie
+    public categorie_badge_enum getCategorie() {
+        return categorie;
+    }
+
+    public void setCategorie(categorie_badge_enum categorie) {
+        this.categorie = categorie;
+    }
 }

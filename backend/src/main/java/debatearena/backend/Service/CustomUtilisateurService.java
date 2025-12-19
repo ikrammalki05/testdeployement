@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class CustomUtilisateurService implements UserDetailsService {
 
     private final UtilisateurRepository utilisateurRepository;
-
+    public CustomUtilisateurService(UtilisateurRepository utilisateurRepository) {
+        this.utilisateurRepository = utilisateurRepository;
+    }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 

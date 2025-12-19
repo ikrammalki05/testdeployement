@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,27 +15,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     private final CustomUtilisateurService customUtilisateurService;
     private final JwtUtil jwtUtil;
 
+    // Constructeur correspondant
+    public JwtFilter(CustomUtilisateurService customUtilisateurService, JwtUtil jwtUtil) {
+        this.customUtilisateurService = customUtilisateurService;
+        this.jwtUtil = jwtUtil;
+    }
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-
-        //MODIF ICI
-        String path = request.getRequestURI();
-
-        // 🔥 IGNORER les routes publiques
-
-        if (path.equals("/api/auth/signin") || path.equals("/api/auth/signup")) {
-          filterChain.doFilter(request, response);
-          return;
-        }
 
         String username = null;
         String jwt = null;

@@ -15,11 +15,17 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomUtilisateurService customUtilisateurService;
     private final JwtUtil jwtUtil;
+
+    public SecurityConfig(CustomUtilisateurService customUtilisateurService,
+                          JwtUtil jwtUtil) {
+        this.customUtilisateurService = customUtilisateurService;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
