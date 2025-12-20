@@ -6,7 +6,5 @@ import StartDebate from './screens/Debate/StartDebate';
 import Chat from './screens/Debate/Chat';
 
 export default function App() {
-  return <Chat/>;
+  return <RootStack />;
 }
-
-
