@@ -3,11 +3,11 @@ package debatearena.backend.Service;
 import debatearena.backend.Entity.Badge;
 import debatearena.backend.Entity.categorie_badge_enum;
 import debatearena.backend.Repository.BadgeRepository;
-import lombok.RequiredArgsConstructor;
+//import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class BadgeService {
 
     private final BadgeRepository badgeRepository;
