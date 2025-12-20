@@ -52,16 +52,18 @@ class JwtUtilTest {
     }
 
     @Test
-    void expiredToken_shouldFailValidation() throws InterruptedException, NoSuchFieldException, IllegalAccessException {
-        // Token qui expire après 1 seconde
+    void expiredToken_shouldFailValidation() throws Exception {
+        // ⛔ expiration négative → token déjà expiré
         Field expField = JwtUtil.class.getDeclaredField("expirationTimeMs");
         expField.setAccessible(true);
-        expField.set(jwtUtil, 1000L);
+        expField.set(jwtUtil, -1000L); // expiré dans le passé
 
         String token = jwtUtil.generateToken("user@test.com", "UTILISATEUR");
-        Thread.sleep(1500); // attendre que le token expire
 
-        UserDetails userDetails = new User("user@test.com", "password", Collections.emptyList());
-        assertFalse(jwtUtil.validateToken(token, userDetails), "Le token doit être expiré");
+        UserDetails userDetails =
+                new User("user@test.com", "password", Collections.emptyList());
+
+        assertFalse(jwtUtil.validateToken(token, userDetails),
+                "Le token doit être expiré");
     }
 }
