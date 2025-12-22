@@ -1,5 +1,6 @@
 package debatearena.backend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -10,6 +11,7 @@ import org.hibernate.type.SqlTypes;
 @AllArgsConstructor
 @Entity
 @Table(name = "badge")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Badge {
 
     @Id
@@ -23,7 +25,7 @@ public class Badge {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "categorie")
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private categorie_badge_enum categorie;
     public String getNom() {

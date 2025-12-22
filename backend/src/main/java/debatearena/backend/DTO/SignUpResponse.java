@@ -13,6 +13,7 @@ public class SignUpResponse {
     private Integer score;
     private String badgeNom;
     private String badgeCategorie;
+    private String imageUrl;
 
     public SignUpResponse(Long id,
                           String nom,
@@ -20,7 +21,8 @@ public class SignUpResponse {
                           String email,
                           Integer score,
                           String badgeNom,
-                          String badgeCategorie) {
+                          String badgeCategorie,
+                          String imageUrl) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -28,10 +30,19 @@ public class SignUpResponse {
         this.score = score;
         this.badgeNom = badgeNom;
         this.badgeCategorie = badgeCategorie;
+        this.imageUrl = imageUrl;
     }
 
     public SignUpResponse() {
 
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     // ---------- GETTERS ----------

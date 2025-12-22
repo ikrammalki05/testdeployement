@@ -13,6 +13,12 @@ public class AuthResponse {
 
     public AuthResponse(String token123) {
     }
+
+    public AuthResponse(String token, String role) {
+        this.token = token;
+        this.role = role;
+    }
+
     public AuthResponse() {}
 
     public String getToken() {

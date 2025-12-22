@@ -6,6 +6,7 @@ import debatearena.backend.DTO.SignInRequest;
 import debatearena.backend.DTO.SignUpRequest;
 import debatearena.backend.DTO.SignUpResponse;
 import debatearena.backend.Entity.Utilisateur;
+import debatearena.backend.Service.AuthService;
 import debatearena.backend.Service.BadgeService;
 import debatearena.backend.Service.CustomUtilisateurService;
 import debatearena.backend.Service.UtilisateurService;
@@ -46,6 +47,9 @@ class AuthControllerTest {
     private UtilisateurService utilisateurService;
 
     @MockBean
+    private AuthService authService;
+
+    @MockBean
     private AuthenticationManager authenticationManager;
 
     @MockBean
@@ -74,7 +78,7 @@ class AuthControllerTest {
         when(utilisateurService.findUtilisateurByEmail("test@gmail.com"))
                 .thenReturn(Optional.empty());
 
-        when(utilisateurService.signup(any(SignUpRequest.class)))
+        when(authService.signup(any(SignUpRequest.class)))
                 .thenReturn(response);
 
         mockMvc.perform(post("/api/auth/signup")
@@ -120,7 +124,7 @@ class AuthControllerTest {
         AuthResponse mockResponse = new AuthResponse();
         mockResponse.setToken("token123");
         mockResponse.setRole("USER");  // ou le rôle attendu
-        when(utilisateurService.signin(any(SignInRequest.class)))
+        when(authService.signin(any(SignInRequest.class)))
                 .thenReturn(mockResponse);
 
         mockMvc.perform(post("/api/auth/signin")

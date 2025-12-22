@@ -3,6 +3,7 @@ package debatearena.backend.DTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 //@AllArgsConstructor
@@ -12,16 +13,26 @@ public class SignUpRequest {
     private String prenom;
     private String email;
     private String password;
+    private MultipartFile image;
     // ✔️ Constructeur vide (OBLIGATOIRE pour Spring / Jackson)
     public SignUpRequest() {
     }
 
     // ✔️ Constructeur avec paramètres (pour tes tests)
-    public SignUpRequest(String nom, String prenom, String email, String password) {
+    public SignUpRequest(String nom, String prenom, String email, String password, MultipartFile image) {
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
         this.password = password;
+        this.image = image;
+    }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
     }
 
     // ✔️ Getters et Setters (à écrire si pas Lombok)
