@@ -5,30 +5,26 @@ import debatearena.backend.DTO.AuthResponse;
 import debatearena.backend.DTO.SignInRequest;
 import debatearena.backend.DTO.SignUpRequest;
 import debatearena.backend.DTO.SignUpResponse;
-import debatearena.backend.Entity.Utilisateur;
 import debatearena.backend.Service.AuthService;
 import debatearena.backend.Service.BadgeService;
 import debatearena.backend.Service.CustomUtilisateurService;
+import debatearena.backend.Service.PasswordResetService;
 import debatearena.backend.Service.UtilisateurService;
 import debatearena.backend.Security.JwtUtil;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.BadCredentialsException; // Import important
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,88 +40,59 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private UtilisateurService utilisateurService;
+    private AuthService authService; // C'est lui qu'on doit manipuler !
 
-    @MockBean
-    private AuthService authService;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
-
-    @MockBean
-    private BadgeService badgeService;
-
-    @MockBean
-    private JwtUtil jwtUtil;
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private CustomUtilisateurService customUtilisateurService;
+    // Les autres mocks sont nécessaires pour charger le contexte, mais on ne les configure pas directement ici
+    @MockBean private UtilisateurService utilisateurService;
+    @MockBean private AuthenticationManager authenticationManager;
+    @MockBean private BadgeService badgeService;
+    @MockBean private JwtUtil jwtUtil;
+    @MockBean private PasswordEncoder passwordEncoder;
+    @MockBean private CustomUtilisateurService customUtilisateurService;
+    @MockBean private PasswordResetService passwordResetService;
 
     // -------- SIGNUP SUCCESS ----------
     @Test
     void signup_ShouldReturn200_WhenUserCreated() throws Exception {
-
-        SignUpRequest request = new SignUpRequest();
-        request.setEmail("test@gmail.com");
-        request.setPassword("123456");
-
         SignUpResponse response = new SignUpResponse();
         response.setMessage("created");
 
-        when(utilisateurService.findUtilisateurByEmail("test@gmail.com"))
-                .thenReturn(Optional.empty());
+        when(authService.signup(any(SignUpRequest.class))).thenReturn(response);
 
-        when(authService.signup(any(SignUpRequest.class)))
-                .thenReturn(response);
-
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(multipart("/api/auth/signup")
+                        .param("email", "test@gmail.com")
+                        .param("password", "123456")
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
     }
 
-    // -------- SIGNUP USER ALREADY EXISTS ----------
+    // -------- SIGNUP USER ALREADY EXISTS (CORRIGÉ) ----------
     @Test
     void signup_ShouldReturn400_WhenUserAlreadyExists() throws Exception {
+        // CORRECTION : On dit directement au service de lancer l'exception
+        // (Assurez-vous que votre Controller attrape RuntimeException ou l'exception spécifique que vous lancez)
+        when(authService.signup(any(SignUpRequest.class)))
+                .thenThrow(new RuntimeException("Error: Email is already in use!"));
 
-        SignUpRequest request = new SignUpRequest();
-        request.setEmail("exist@gmail.com");
-        request.setPassword("123456");
-
-        when(utilisateurService.findUtilisateurByEmail("exist@gmail.com"))
-                .thenReturn(Optional.of(Mockito.mock(Utilisateur.class)));
-
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(multipart("/api/auth/signup")
+                        .param("email", "exist@gmail.com")
+                        .param("password", "123456")
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isBadRequest());
     }
 
     // -------- SIGNIN SUCCESS ----------
     @Test
     void signin_ShouldReturn200_WhenCredentialsValid() throws Exception {
-
         SignInRequest request = new SignInRequest();
         request.setEmail("test@gmail.com");
         request.setPassword("123456");
 
-        // Mock Authentication
-        Authentication authentication = Mockito.mock(Authentication.class);
-        when(authentication.isAuthenticated()).thenReturn(true);
-
-        // Mock AuthenticationManager
-        when(authenticationManager.authenticate(any(Authentication.class)))
-                .thenReturn(authentication);
-
-        // Mock utilisateurService.signin pour renvoyer le token et le role
         AuthResponse mockResponse = new AuthResponse();
         mockResponse.setToken("token123");
-        mockResponse.setRole("USER");  // ou le rôle attendu
-        when(authService.signin(any(SignInRequest.class)))
-                .thenReturn(mockResponse);
+        mockResponse.setRole("USER");
+
+        when(authService.signin(any(SignInRequest.class))).thenReturn(mockResponse);
 
         mockMvc.perform(post("/api/auth/signin")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -134,19 +101,16 @@ class AuthControllerTest {
                 .andExpect(content().json("{\"token\":\"token123\",\"role\":\"USER\"}"));
     }
 
-
-
-
-    // -------- SIGNIN FAILED ----------
+    // -------- SIGNIN FAILED (CORRIGÉ) ----------
     @Test
     void signin_ShouldReturn401_WhenBadCredentials() throws Exception {
-
         SignInRequest request = new SignInRequest();
         request.setEmail("wrong@gmail.com");
         request.setPassword("wrong");
 
-        when(authenticationManager.authenticate(any(Authentication.class)))
-                .thenThrow(new RuntimeException("Bad credentials"));
+        // CORRECTION : On dit au service de lancer l'exception BadCredentialsException
+        when(authService.signin(any(SignInRequest.class)))
+                .thenThrow(new BadCredentialsException("Bad credentials"));
 
         mockMvc.perform(post("/api/auth/signin")
                         .contentType(MediaType.APPLICATION_JSON)

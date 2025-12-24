@@ -4,16 +4,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType; // Import nécessaire
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+// IMPORTANT : On change 'post' par 'multipart'
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test") // <- Utilise application-test.properties avec H2
+@ActiveProfiles("test")
 class AuthControllerIntegrationTest {
 
     @Autowired
@@ -21,16 +22,13 @@ class AuthControllerIntegrationTest {
 
     @Test
     void signup_shouldWork_withFullSpringContext() throws Exception {
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                            {
-                              "nom": "Integration",
-                              "prenom": "Test",
-                              "email": "integration@test.com",
-                              "password": "123456"
-                            }
-                        """))
+        // CORRECTION : Utilisation de .param() au lieu de JSON string
+        mockMvc.perform(multipart("/api/auth/signup")
+                        .param("nom", "Integration")
+                        .param("prenom", "Test")
+                        .param("email", "integration@test.com")
+                        .param("password", "123456")
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
     }
 }
