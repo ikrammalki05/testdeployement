@@ -6,6 +6,7 @@ import debatearena.backend.DTO.SignUpRequest;
 import debatearena.backend.DTO.SignUpResponse;
 import debatearena.backend.Service.AuthService;
 import debatearena.backend.Service.PasswordResetService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

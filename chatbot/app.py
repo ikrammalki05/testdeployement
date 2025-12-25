@@ -1,96 +1,69 @@
 # chatbot/app.py
-# API REST
-
 import os
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from .chatbot_service import ChatbotService
+from typing import Optional
+from dotenv import load_dotenv
 
-app = FastAPI(title="DebatArena Chatbot API", version="1.0.0")
+from chatbot.chatbot_service import ChatbotService
 
-# Configuration CORS pour React Native
+# Charger les variables d'environnement
+load_dotenv()
+
+app = FastAPI(title="DebatArena API")
+
+# Configuration CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # À restreindre en production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ----------------------------
-# Dependency Injection (PRO)
-# ----------------------------
+# Initialiser le service avec l'API key depuis les variables d'environnement
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY manquante dans le fichier .env")
+
+chatbot = ChatbotService(api_key=GEMINI_API_KEY)
 
 
-def get_chatbot_service() -> ChatbotService:
-    api_key = os.getenv("GOOGLE_API_KEY")
-    return ChatbotService(api_key=api_key)
-
-# ----------------------------
-# Modèles
-# ----------------------------
-
-
+# Modèles Pydantic
 class ChatRequest(BaseModel):
     message: str
-    session_id: str | None = None
+    mode: str = "train"
+    session_id: Optional[str] = None
 
 
 class ChatResponse(BaseModel):
-    response: str
+    text: str
     session_id: str
-
-# ----------------------------
-# Routes
-# ----------------------------
 
 
 @app.get("/")
-def root():
-    return {"message": "DebatArena Chatbot API", "status": "running"}
-
-
-@app.get("/health")
-def health_check():
-    return {"status": "healthy", "service": "chatbot"}
+async def root():
+    return {"message": "DebatArena API is running"}
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(
-    request: ChatRequest,
-    chatbot_service: ChatbotService = Depends(get_chatbot_service)
-):
-    """
-    Endpoint pour envoyer un message au chatbot
-    """
+async def chat(request: ChatRequest):
     try:
-        response = chatbot_service.generate_response(
+        response = chatbot.generate_response(
             message=request.message,
+            mode=request.mode,
             session_id=request.session_id
         )
-        return ChatResponse(
-            response=response["text"],
-            session_id=response["session_id"]
-        )
+        return ChatResponse(**response)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.delete("/chat/{session_id}")
-async def clear_session(
-    session_id: str,
-    chatbot_service: ChatbotService = Depends(get_chatbot_service)
-):
-    """
-    Endpoint pour effacer l'historique d'une session
-    """
-    chatbot_service.clear_session(session_id)
-    return {"message": "Session cleared", "session_id": session_id}
-
-# ----------------------------
-# Lancement local
-# ----------------------------
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.delete("/session/{session_id}")
+async def clear_session(session_id: str):
+    try:
+        chatbot.clear_session(session_id)
+        return {"message": f"Session {session_id} cleared successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
