@@ -79,6 +79,6 @@ def test_chat_final_score():
 
 
 def test_clear_session():
-    response = client.delete("/chat/session123")
+    response = client.delete("/session/session123")
     assert response.status_code == 200
     assert response.json()["message"] == "Session cleared"

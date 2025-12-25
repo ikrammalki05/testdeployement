@@ -40,7 +40,7 @@ class ChatRequest(BaseModel):
 
 
 class ChatResponse(BaseModel):
-    text: str
+    response: str
     session_id: str
 
 
@@ -55,16 +55,20 @@ async def health():
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest, chatbot: ChatbotService = Depends(get_chatbot_service)):
-    try:
-        response = chatbot.generate_response(
-            message=request.message,
-            mode=request.mode,
-            session_id=request.session_id
-        )
-        return ChatResponse(**response)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def chat(
+    request: ChatRequest, 
+    chatbot: ChatbotService = Depends(get_chatbot_service)
+):
+    result = chatbot.generate_response(
+        message=request.message,
+        mode=request.mode,          # 🔥 mode conservé
+        session_id=request.session_id
+    )
+
+    return ChatResponse(
+        response=result["text"],    # mapping ici
+        session_id=result["session_id"]
+    )
 
 
 @app.delete("/session/{session_id}")
