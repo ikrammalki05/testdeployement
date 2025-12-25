@@ -1,6 +1,6 @@
 # chatbot/app.py
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -25,10 +25,11 @@ app.add_middleware(
 
 # Initialiser le service avec l'API key depuis les variables d'environnement
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY manquante dans le fichier .env")
 
-chatbot = ChatbotService(api_key=GEMINI_API_KEY)
+def get_chatbot_service():
+    if not GEMINI_API_KEY:
+        raise RuntimeError("GEMINI_API_KEY manquante")
+    return ChatbotService(GEMINI_API_KEY)
 
 
 # Modèles Pydantic
@@ -49,7 +50,7 @@ async def root():
 
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+async def chat(request: ChatRequest, chatbot: ChatbotService = Depends(get_chatbot_service)):
     try:
         response = chatbot.generate_response(
             message=request.message,
@@ -62,7 +63,7 @@ async def chat(request: ChatRequest):
 
 
 @app.delete("/session/{session_id}")
-async def clear_session(session_id: str):
+async def clear_session(session_id: str, chatbot: ChatbotService = Depends(get_chatbot_service)):
     try:
         chatbot.clear_session(session_id)
         return {"message": f"Session {session_id} cleared successfully"}
