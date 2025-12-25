@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 from chatbot.chatbot_service import ChatbotService
 
+
 # Charger les variables d'environnement
 load_dotenv()
 
