@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import Optional
 from dotenv import load_dotenv
 
-from chatbot.chatbot_service import ChatbotService
+from chatbot_service import ChatbotService
 
 
 # Charger les variables d'environnement
@@ -25,6 +25,7 @@ app.add_middleware(
 
 # Initialiser le service avec l'API key depuis les variables d'environnement
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 
 def get_chatbot_service():
     if not GEMINI_API_KEY:
@@ -56,7 +57,7 @@ async def health():
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(
-    request: ChatRequest, 
+    request: ChatRequest,
     chatbot: ChatbotService = Depends(get_chatbot_service)
 ):
     result = chatbot.generate_response(
