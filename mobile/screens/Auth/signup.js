@@ -26,63 +26,49 @@ const SignUp = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSignUp = async (credentials) => {
-      setIsLoading(true);
-      try {
-       
-        const response = await api.post('/auth/signup', {
-          nom: credentials.nom,
-          prenom: credentials.prenom,
-          email: credentials.email.toLowerCase(), 
-          password: credentials.password,
-          // Pas de champ image - le backend utilisera default.jpg
-        });
-        
-    
-        const {id, nom, prenom, email, score, badgeMom, badgeCategorie, imageUrl} = response.data;
+    setIsLoading(true);
+    try {
+      console.log("Tentative d'inscription avec:", credentials);
 
-        // Stocker les données dans AsyncStorage
-        await AsyncStorage.setItem('id', id.toString());
-        await AsyncStorage.setItem('nom', nom);
-        await AsyncStorage.setItem('prenom', prenom);
-        await AsyncStorage.setItem('email', email);
-        await AsyncStorage.setItem('score', score.toString());
-        await AsyncStorage.setItem('badgeMom', badgeMom);
-        await AsyncStorage.setItem('badgeCategorie', badgeCategorie);
-        await AsyncStorage.setItem('imageUrl', imageUrl);
+      const formData = new FormData();
+      formData.append('nom', credentials.nom);
+      formData.append('prenom', credentials.prenom);
+      formData.append('email', credentials.email.toLowerCase().trim());
+      formData.append('password', credentials.password);
 
-        console.log("Inscription réussie, utilisateur enregistré");
-        
-        // Afficher un message de succès et rediriger
-        Alert.alert(
-          "Inscription réussie !",
-          "Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.",
-          [
-            { 
-              text: "OK", 
-              onPress: () => navigation.navigate("Login") 
-            }
-          ]
-        );
-        
-      } catch (error) {
-        console.log("Erreur d'inscription: ", error.response?.data || error.message);
-        
-        // Messages d'erreur plus précis
-        let errorMessage = "Une erreur est survenue lors de l'inscription";
-        
-        if (error.response?.status === 400) {
-          errorMessage = "Données invalides. Vérifiez vos informations.";
-        } else if (error.response?.status === 409) {
-          errorMessage = "Cet email est déjà utilisé.";
-        } else if (error.response?.data?.message) {
-          errorMessage = error.response.data.message;
-        }
-        
-        Alert.alert("Erreur d'inscription", errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
+      const response = await api.post('/auth/signup', formData);
+
+      console.log("Inscription réussie:", response.data);
+
+      const { id, nom, prenom, email } = response.data;
+
+      await AsyncStorage.multiSet([
+        ['id', id.toString()],
+        ['nom', nom],
+        ['prenom', prenom],
+        ['email', email],
+        ['isLoggedIn', 'true'],
+      ]);
+
+      Alert.alert(
+        "🎉 Inscription réussie !",
+        "Votre compte a été créé avec succès.",
+        [{ text: "Se connecter", onPress: () => navigation.navigate("Login") }]
+      );
+
+    } catch (error) {
+      console.log("ERREUR inscription:", error.response?.data || error.message);
+      console.log("Status:", error.response?.status);
+
+      Alert.alert(
+        "❌ Erreur d'inscription",
+        error.response?.data?.message || "Impossible de créer le compte"
+      );
+    } finally {
+      setIsLoading(false);
     }
+  };
+
 
   return (
    <KeyboardAvoidingWrapper>
@@ -101,6 +87,7 @@ const SignUp = ({navigation}) => {
         <Formik
           initialValues={{ nom: '', prenom: '', email:'',password:'', confirmPassword:''}}
           onSubmit={(values) => {
+            // Validation
             const allFieldsFilled =
                values.nom.trim() !== '' &&
                values.prenom.trim() !== '' &&
@@ -109,12 +96,12 @@ const SignUp = ({navigation}) => {
                values.confirmPassword.trim() !== '';
 
             if (!allFieldsFilled) {
-                setShowAllFieldsError(true);
+                Alert.alert("Champs manquants", "Tous les champs sont obligatoires");
                 return;
             }
 
             if (values.password !== values.confirmPassword) {
-                setShowAllFieldsError(true);
+                Alert.alert("Mots de passe différents", "Les mots de passe ne correspondent pas");
                 return;
             }
 
@@ -125,14 +112,13 @@ const SignUp = ({navigation}) => {
                 return;
             }
 
-            // Validation mot de passe (au moins 6 caractères)
+            // Validation mot de passe
             if (values.password.length < 6) {
                 Alert.alert("Mot de passe trop court", "Le mot de passe doit contenir au moins 6 caractères");
                 return;
             }
 
-            setShowAllFieldsError(false);
-            console.log("Données d'inscription:", values);
+            console.log("Données d'inscription validées:", values);
 
             const { confirmPassword, ...filteredData } = values;
             handleSignUp(filteredData);
@@ -146,6 +132,7 @@ const SignUp = ({navigation}) => {
                 onChangeText={handleChange("nom")}
                 onBlur={handleBlur("nom")}
                 value={values.nom}
+                autoCapitalize="words"
               />
               <MyTextInput
                 placeholder="Prénom"
@@ -153,6 +140,7 @@ const SignUp = ({navigation}) => {
                 onChangeText={handleChange("prenom")}
                 onBlur={handleBlur("prenom")}
                 value={values.prenom}
+                autoCapitalize="words"
               />
               <MyTextInput
                 placeholder="votreemail@exemple.com"
@@ -162,6 +150,7 @@ const SignUp = ({navigation}) => {
                 value={values.email}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                autoComplete="email"
               />
               <Label>Mot de passe (minimum 6 caractères)</Label>
               <MyTextInput
@@ -191,27 +180,30 @@ const SignUp = ({navigation}) => {
               <TextLink>
                 <TextLinkContent style={{marginBottom: 30}}></TextLinkContent>
               </TextLink>
-              
-              {showAllFieldsError && (
-                <Label style={{color: "red", textAlign: "center", marginVertical: 10, marginBottom: 30}}>
-                  {values.password !== values.confirmPassword && values.password && values.confirmPassword
-                    ? "Les mots de passe ne correspondent pas"
-                    : "Tous les champs sont obligatoires"
-                  }
-                </Label>
-              )}
 
               <Shadow>
                 <StyledButton onPress={handleSubmit} disabled={isLoading}>
-                  <ButtonText>{isLoading ? "Inscription..." : "INSCRIPTION"}</ButtonText>
+                  <ButtonText>
+                    {isLoading ? "Inscription en cours..." : "S'INSCRIRE"}
+                  </ButtonText>
                 </StyledButton>
               </Shadow>
 
               <TextLink onPress={() => navigation.navigate("Login")}>
                 <TextLinkContent style={{marginBottom: 60}}>
-                  Déjà inscrit-e ? Connectez-vous
+                  Déjà un compte ? Se connecter
                 </TextLinkContent>
               </TextLink>
+
+              <Label style={{
+                textAlign: 'center', 
+                color: '#666', 
+                fontSize: 12,
+                marginTop: 10
+              }}>
+                Une photo de profil par défaut vous sera attribuée.
+                Vous pourrez la modifier plus tard.
+              </Label>
 
             </StyledFormArea>
           )}
@@ -226,14 +218,12 @@ const SignUp = ({navigation}) => {
 const MyTextInput = ({icon, isPassword, hidePassword, setHidePassword, ...props }) => {
   return (
     <View>
-      <Shadow>
         <StyledTextInput {...props} />
         {isPassword && (
           <RightIcon onPress={() => setHidePassword(!hidePassword)}>
             <Ionicons name={hidePassword ? 'eye-off' : 'eye'} size={30} color={grey}/>
           </RightIcon>
         )}
-      </Shadow>
     </View>
   );
 };

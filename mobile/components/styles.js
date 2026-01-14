@@ -15,10 +15,13 @@ export const Colors = {
   lightPink: "#C8ADC0",
   pink: "#DB7F8E",
   white: "#FFFFFF",
-  grey: "#999999"
+  grey: "#999999",
+  brand: "#1E90FF",
+  green: "#4CAF50",
+  darkLight: "#2E2E2E"
 };
 
-const { dark, yellow, blue, lightPink, pink, white } = Colors;
+const { dark, yellow, blue, lightPink, pink, white, grey, brand, green, darkLight } = Colors;
 
 export const InnerContainer = styled.View`
   flex: 1;
@@ -225,17 +228,5 @@ export const WhiteContainer = styled.View`
   background-color: ${white};
   elevation: 15;
 `
-
-export const ProfileImage = styled.Image`
-  width: 300px;
-  height: 140px;
-  radius: 60px;
-`;
-
-
-
-
-
- 
 
 

@@ -36,7 +36,7 @@ const Login = ({navigation}) => {
         await AsyncStorage.setItem('userRole', role);
 
         console.log("Connexion réussie, token stocké");
-        navigation.navigate("Dashboard");
+        navigation.navigate("AppTabs");
       }catch (error){
         console.log("Erreur: ", error.response?.data || error.message);
       }finally{
