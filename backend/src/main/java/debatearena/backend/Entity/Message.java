@@ -28,15 +28,15 @@ public class Message {
     @JoinColumn(name = "id_utilisateur", nullable = false)
     private Utilisateur utilisateur;
 
+
+    public Message() {
+    }
     // Constructeur pour message utilisateur
     public Message(String contenu, Debat debat, Utilisateur utilisateur) {
         this.contenu = contenu;
         this.debat = debat;
         this.utilisateur = utilisateur;
         this.timestamp = LocalDateTime.now();
-    }
-
-    public Message() {
     }
 
     public Long getId() {

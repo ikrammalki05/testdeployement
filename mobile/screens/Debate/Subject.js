@@ -457,7 +457,7 @@ const Subject = ({ navigation, route }) => {
                     onPress={() => navigation.goBack()}
                     disabled={loading}
                   >
-                    <ButtonText style={{
+                    <BuzttonText style={{
                       color: white,
                       fontSize: 16,
                       textAlign: 'center'
