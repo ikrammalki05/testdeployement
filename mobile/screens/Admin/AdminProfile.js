@@ -238,29 +238,19 @@ const AdminProfile = ({ navigation }) => {
                   {profileData?.email}
                 </Text>
               </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 14, color: grey }}>ID Admin:</Text>
-                <Text style={{ fontSize: 14, color: dark, fontWeight: '500' }}>
-                  #{profileData?.id}
-                </Text>
-              </View>
+              
             </View>
 
             <View style={{ height: 1, backgroundColor: '#E0E0E0', marginVertical: 15 }} />
 
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-                <Ionicons name="calendar" size={20} color={blue} style={{ marginRight: 10 }} />
+                <Ionicons name="chevron-forward" size={20} color="blue"  style={{ marginRight: 10 }} />
                 <Text style={{ fontSize: 16, color: dark, fontWeight: '600' }}>
-                  Historique
+                  Détails
                 </Text>
               </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-                <Text style={{ fontSize: 14, color: grey }}>Date d'inscription:</Text>
-                <Text style={{ fontSize: 14, color: dark, fontWeight: '500' }}>
-                  {formatDate(profileData?.dateInscription)}
-                </Text>
-              </View>
+              
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ fontSize: 14, color: grey }}>Rôle:</Text>
                 <View style={{
@@ -279,161 +269,7 @@ const AdminProfile = ({ navigation }) => {
         </View>
 
         {/* Section Statistiques admin (à venir) */}
-        <View style={{ marginBottom: 30 }}>
-          <ExistingSectionTitle style={{ color: dark, textAlign: 'left', marginBottom: 15 }}>
-            Statistiques d'administration
-          </ExistingSectionTitle>
-          
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-            <InfoBox style={{ 
-              width: '48%', 
-              backgroundColor: blue, 
-              borderColor: blue,
-              alignItems: 'center',
-              padding: 15,
-              marginBottom: 10,
-            }}>
-              <Ionicons name="shield-checkmark" size={30} color={white} style={{ marginBottom: 10 }} />
-              <Text style={{ fontSize: 12, color: white, textAlign: 'center', marginBottom: 5 }}>
-                Signalements traités
-              </Text>
-              <Text style={{ fontSize: 24, fontWeight: 'bold', color: white }}>
-                --
-              </Text>
-            </InfoBox>
-
-            <InfoBox style={{ 
-              width: '48%', 
-              backgroundColor: yellow, 
-              borderColor: yellow,
-              alignItems: 'center',
-              padding: 15,
-              marginBottom: 10,
-            }}>
-              <Ionicons name="people" size={30} color={dark} style={{ marginBottom: 10 }} />
-              <Text style={{ fontSize: 12, color: dark, textAlign: 'center', marginBottom: 5 }}>
-                Utilisateurs gérés
-              </Text>
-              <Text style={{ fontSize: 24, fontWeight: 'bold', color: dark }}>
-                --
-              </Text>
-            </InfoBox>
-
-            <InfoBox style={{ 
-              width: '48%', 
-              backgroundColor: '#F0F7FF', 
-              borderColor: blue,
-              borderWidth: 1,
-              alignItems: 'center',
-              padding: 15,
-            }}>
-              <Ionicons name="chatbubbles" size={30} color={blue} style={{ marginBottom: 10 }} />
-              <Text style={{ fontSize: 12, color: dark, textAlign: 'center', marginBottom: 5 }}>
-                Débats modérés
-              </Text>
-              <Text style={{ fontSize: 24, fontWeight: 'bold', color: blue }}>
-                --
-              </Text>
-            </InfoBox>
-
-            <InfoBox style={{ 
-              width: '48%', 
-              backgroundColor: '#FFF8F0', 
-              borderColor: yellow,
-              borderWidth: 1,
-              alignItems: 'center',
-              padding: 15,
-            }}>
-              <Ionicons name="settings" size={30} color={yellow} style={{ marginBottom: 10 }} />
-              <Text style={{ fontSize: 12, color: dark, textAlign: 'center', marginBottom: 5 }}>
-                Actions totales
-              </Text>
-              <Text style={{ fontSize: 24, fontWeight: 'bold', color: yellow }}>
-                --
-              </Text>
-            </InfoBox>
-          </View>
-        </View>
-
-        {/* Section Actions */}
-        <View style={{ marginBottom: 40 }}>
-          <ExistingSectionTitle style={{ color: dark, textAlign: 'left', marginBottom: 15 }}>
-            Actions
-          </ExistingSectionTitle>
-          
-          <TouchableOpacity
-            onPress={() => navigation.navigate('AdminSignal')}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#F0F7FF',
-              padding: 15,
-              borderRadius: 10,
-              marginBottom: 10,
-              borderWidth: 1,
-              borderColor: blue,
-            }}
-          >
-            <Ionicons name="warning" size={24} color={blue} style={{ marginRight: 15 }} />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, color: dark, fontWeight: '600' }}>
-                Gérer les signalements
-              </Text>
-              <Text style={{ fontSize: 12, color: grey }}>
-                Consulter et traiter les signalements
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={grey} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate('AdminSujets')}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#FFF8F0',
-              padding: 15,
-              borderRadius: 10,
-              marginBottom: 10,
-              borderWidth: 1,
-              borderColor: yellow,
-            }}
-          >
-            <Ionicons name="list" size={24} color={yellow} style={{ marginRight: 15 }} />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, color: dark, fontWeight: '600' }}>
-                Gérer les sujets
-              </Text>
-              <Text style={{ fontSize: 12, color: grey }}>
-                Modérer les sujets de débats
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={grey} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={fetchProfileData}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#F8F9FA',
-              padding: 15,
-              borderRadius: 10,
-              marginBottom: 15,
-              borderWidth: 1,
-              borderColor: '#E0E0E0',
-            }}
-          >
-            <Ionicons name="refresh" size={24} color={dark} style={{ marginRight: 15 }} />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, color: dark, fontWeight: '600' }}>
-                Actualiser les données
-              </Text>
-              <Text style={{ fontSize: 12, color: grey }}>
-                Rafraîchir les informations du profil
-              </Text>
-            </View>
-          </TouchableOpacity>
+        <View style={{ marginBottom: 30 }}>    
 
           {/* Bouton de déconnexion */}
           <StyledButton 
