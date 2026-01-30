@@ -1,4 +1,4 @@
-package debatearena.backend.controller; 
+package debatearena.backend.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,5 +9,10 @@ public class TestController {
     @GetMapping("/hello")
     public String hello() {
         return "DebateArena backend is running!";
+    }
+
+    @GetMapping("/")
+    public String home() {
+        return "Bienvenue sur DebateArena backend !";
     }
 }
